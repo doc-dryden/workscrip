@@ -1,0 +1,262 @@
+<head>
+<style>
+        	.paragraph-text{
+				color: red;
+			}
+			.blue-text{
+				color: blue;
+			}
+			.text-bold{
+				font-weight: bold;
+				font-size: 10px;
+			}
+			.background{
+				background-color: #bedafa;
+			}
+    </style>
+    <script>
+        function write(str) {
+				var bodyElements,
+					body,
+					div;
+
+				div = document.createElement('div');
+				div.innerHTML = str;
+
+				bodyElements = document.getElementsByTagName('body');
+				body = bodyElements[0];
+
+				body.insertBefore(div, body.firstChild);
+			}
+
+			function getSAPSession() {
+				var application,
+					connection,
+					sapgui;
+
+				sapgui = GetObject("SAPGUI");
+				application = sapgui.getScriptingEngine();
+				connection = application.children(0);
+				return connection.children(0);
+			}
+
+			function getBranchNumber(session) {
+				var PLANT_ID = 'WRK',
+					value, 
+					row,
+					str,
+					id;
+
+				function getScrollPosition() {
+					return session.findById("wnd[0]/usr/tabsTABSTRIP1/tabpPARAM/ssubMAINAREA:SAPLSUU5:0104/tblSAPLSUU5TC_PARAM").verticalScrollbar.position;
+				}
+
+				function setScrollPosition(position) {
+					var currentPosition;
+
+					currentPosition = getScrollPosition();
+					session.findById("wnd[0]/usr/tabsTABSTRIP1/tabpPARAM/ssubMAINAREA:SAPLSUU5:0104/tblSAPLSUU5TC_PARAM").verticalScrollbar.position = position;
+					return (getScrollPosition() != currentPosition);
+				}
+
+				function getText() {
+					value = null;
+					id = null;
+
+					try {
+						id = session.findById("wnd[0]/usr/tabsTABSTRIP1/tabpPARAM/ssubMAINAREA:SAPLSUU5:0104/tblSAPLSUU5TC_PARAM/ctxtUSPARAM-PARID[0," + row + "]").text;
+						value = session.findById("wnd[0]/usr/tabsTABSTRIP1/tabpPARAM/ssubMAINAREA:SAPLSUU5:0104/tblSAPLSUU5TC_PARAM/txtUSPARAM-PARVA[1," + row + "]").text; // id
+					} catch(err) {
+						// SAP didn't like the row (we went off the page) -That's ok... it just means stop.
+					}
+					return (true && id);
+				}
+
+				session.startTransaction('SU3');
+				session.findById("wnd[0]/usr/tabsTABSTRIP1/tabpPARAM").select();
+
+				do {
+					row = 0;
+					while(getText()) {
+						if (id == PLANT_ID) {
+							return value;
+						}
+						row++;
+					}
+				} while (setScrollPosition(getScrollPosition() + row));
+				return null;
+			}
+
+			function goItemMaster() {
+				var branchNumber, 
+					session;
+				
+				function initSession() {
+					write('Getting control of SAP session...');
+
+					try {
+						session = getSAPSession();
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t get SAP session'};
+					}
+				}
+
+				function initBranchNumber() {
+					write('Getting branch number from SU3...');
+
+					try {
+						branchNumber = getBranchNumber(session);
+						if ( ! branchNumber) {
+							throw {message: 'getBranchNumber() didn\'t return anything.'}
+						}
+						write('&nbsp;&nbsp;' + branchNumber);
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t get branch number'};
+					}
+				}
+
+				function itemmaster() {
+					write('Running ZZLEIMBKP...');   //ZZLEIMBKP item master t code
+
+					try {
+						session.startTransaction('ZZLEIMBKP');
+						
+						
+						session.findById("wnd[0]/usr/txtP_WHSE").text = branchNumber; ; // set the branch number
+						session.findById("wnd[0]").sendVKey(8);	// hit F8
+						session.findById("wnd[0]").sendVKey(86); //ctrl+p sendkey command
+						
+						//This line commented out to prevent acutal hard copy print, will test at later date 
+						//session.findById("wnd[1]/tbar[0]/btn[13]").press();
+
+
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t run ZZSDVV2'};
+					}
+				}
+	
+				
+			
+				// This is where the 'go' function starts.
+				// It calls four functions and then it's done.
+				// if an error occurs, the message should be pretty telling.
+
+				try {
+					initSession();
+					initBranchNumber();
+					itemmaster();
+					write('Done.');
+				} catch(err) {
+					write(err.message);
+				}
+			}
+			
+					function goReschedule() {
+				var branchNumber, 
+					session;
+				
+				function initSession() {
+					write('Getting control of SAP session...');
+
+					try {
+						session = getSAPSession();
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t get SAP session'};
+					}
+				}
+
+				function initBranchNumber() {
+					write('Getting branch number from SU3...');
+
+					try {
+						branchNumber = getBranchNumber(session);
+						if ( ! branchNumber) {
+							throw {message: 'getBranchNumber() didn\'t return anything.'}
+						}
+						write('&nbsp;&nbsp;' + branchNumber);
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t get branch number'};
+					}
+				}
+
+				function reschedule() {
+					write('Running ZZSDVV2...');
+
+					try {
+						session.startTransaction('ZVA14L'); //THIS SECTION REMOVES HOLD STOCK
+						session.findById("wnd[0]/usr/radP_REMOV").select();
+						session.findById("wnd[0]/usr/radP_REMOV").setFocus();
+						session.findById("wnd[0]/tbar[1]/btn[8]").press();
+
+						session.startTransaction('ZZSDVV2');
+						session.findById("wnd[0]/usr/chkP_SIMUL").selected = false; // de-select 'simulation' button
+						session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = ''; // clear the SKU in the material field
+						session.findById("wnd[0]/usr/ctxtS_WERKS-LOW").text = branchNumber; // set the branch number
+						session.findById("wnd[0]").sendVKey(8);	// hit F8
+						session.findById("wnd[1]/usr/btnSPOP-OPTION1").press(); // press 'yes' button
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t run ZZSDVV2'};
+					}
+				}
+	
+				function printDeliveries() {
+					write('Running VL10G...');
+
+					try {
+						session.startTransaction('VL10G');
+
+						session.findById("wnd[0]/usr/ctxtST_VSTEL-LOW").text = branchNumber + "c";
+						session.findById("wnd[0]").sendVKey(8);
+						session.findById("wnd[0]").sendVKey(5);
+						session.findById("wnd[0]").sendVKey(19);
+						session.findById("wnd[0]").sendVKey(3);
+						
+						session.findById("wnd[0]/usr/ctxtST_VSTEL-LOW").text = branchNumber + "w";
+						session.findById("wnd[0]").sendVKey(8);
+						session.findById("wnd[0]").sendVKey(5);
+						session.findById("wnd[0]").sendVKey(19);
+						session.findById("wnd[0]").sendVKey(3);
+
+						session.findById("wnd[0]/usr/ctxtST_VSTEL-LOW").text = branchNumber + "s";
+						session.findById("wnd[0]").sendVKey(8);
+						session.findById("wnd[0]").sendVKey(5);
+						session.findById("wnd[0]").sendVKey(19);
+						session.findById("wnd[0]").sendVKey(3);
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t run VL10G'};
+					}
+				}
+			
+				// This is where the 'go' function starts.
+				// It calls four functions and then it's done.
+				// if an error occurs, the message should be pretty telling.
+
+				try {
+					initSession();
+					initBranchNumber();
+					reschedule();
+					printDeliveries();
+					write('Done.');
+				} catch(err) {
+					write(err.message);
+				}
+			}
+    </script>
+    </head>
+    <body class="background">
+        <h1>Item Master</h1>
+            <p><button class="paragraph-text" onclick="goItemMaster();">Print Item Master</button></p>
+            <p class="paragraph-text">This Button will Print an Item Master at your branch</p>
+        <h1>Rescheduling</h1>
+            <p><button onclick="goReschedule();" class="blue-text">Reschedule***</button></p>
+            <p class="blue-text"> This Button will reschedule backorders and force delivery of Counter, Will Call and Ship Transfer Orders</p> 
+            <p class="text-bold"> ***NOTE, this will not remove Hold Stock delivery blocks***</p>
+        <h1>Invoice Generator</h1>
+        <form>
+            <label for="deliverynumber">Delivery Number</label><br>
+                <input type="text" id="deliverynumber" name="deliverynumber"><br>
+            <label for="branchnumber">Branch Number</label><br>
+                <input type="text" id="branchnumber" name="deliverynumber"><br>
+            <input type="submit" value="Generate Invoice">
+        </form>
+    </body>  
