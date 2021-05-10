@@ -2,7 +2,7 @@
 <style>
 			.borderstyleh1{
 				border: thin black;
-				height: auto;
+				height: 190px;
 				width: auto;
 				border-style: solid;
 				box-shadow: 0px 0px 5px 6px #000;
@@ -37,6 +37,10 @@
 			.buttonspace{
 				margin: 5px 5px 5px 5px;	
 
+			}
+			.linkspace{
+				margin: 2px;
+				padding-left: 20px;
 			}
     </style>
     <script>
@@ -276,18 +280,18 @@
 		</div>
 		<div id="reschedule" class="borderstyleh1 rescheduling-style">
 			<h1 class="h1center">Rescheduling</h1>
-            <p><button onclick="goReschedule();" class="blue-text">Reschedule***</button></p>
+            <p><button onclick="goReschedule();" class="blue-text buttonspace">Reschedule***</button></p>
             <p class="blue-text"> This Button will reschedule backorders and force delivery of Counter, Will Call and Ship Transfer Orders</p> 
             <p class="text-bold"> ***NOTE, this will not remove Hold Stock delivery blocks***</p>
         </div>
 		<div id="invoice" class="borderstyleh1">
 			<h1 class="h1center" >Invoice Generator</h1>
-        		<form>
+        		
             		<label for="deliverynumber">Delivery Number</label><br>
-                	<input type="text" id="deliverynumber" name="deliverynumber"><br>
+                	<input type="text" id="deliverynumber" name="deliverynumber" class="linkspace"><br>
             		<label for="branchnumber">Branch Number</label><br>
-                	<input type="text" id="branchnumber" name="deliverynumber"><br>
-            		<input type="submit" value="Generate Invoice">
-        		</form>
+                	<input type="text" id="branchnumber" name="deliverynumber" class="linkspace"><br>
+            		<a class="linkspace" href="">Generate Invoice</a>
+        		
 		</div>
     </body>  
