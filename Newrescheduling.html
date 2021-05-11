@@ -44,10 +44,11 @@
 			}
     </style>
     <script>
-		function getDelValue(){
-			var delValue = document.getElementById("deliverynumber").value;
-			alert(delValue);
-		}
+            function getDelValue(){
+                var delValue = document.getElementById("deliverynumber").value;
+				var branchNum = document.getElementById("branchnumber").value;
+                alert(delValue + ", " + branchNum);
+            }
 
         function write(str) {
 				var bodyElements,
@@ -291,12 +292,11 @@
         </div>
 		<div id="invoice" class="borderstyleh1">
 			<h1 class="h1center" >Invoice Generator</h1>
-        		
-            		<label for="deliverynumber">Delivery Number</label><br>
-                	<input type="text" id="deliverynumber" name="deliverynumber" class="linkspace"><br>
-            		<label for="branchnumber">Branch Number</label><br>
-                	<input type="text" id="branchnumber" name="deliverynumber" class="linkspace"><br>
-            		<button class="linkspace" onclick="getDelValue">Generate Invoice</a>
+        	   		<label for="deliverynumber">Delivery Number</label><br>
+                	<input type="text" id="deliverynumber" class="linkspace"><br>
+					<label for="branchnumber">Branch Number</label><br>
+					<input type="text" id="branchnumber" class="linkspace"><br>
+            		<button type="button" class="linkspace" onclick="getDelValue()";>Generate Invoice</a>
         		
 		</div>
     </body>  
