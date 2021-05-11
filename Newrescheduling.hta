@@ -1,20 +1,55 @@
 <head>
 <style>
+			.borderstyleh1{
+				border: thin black;
+				height: 190px;
+				width: auto;
+				border-style: solid;
+				box-shadow: 0px 0px 5px 6px #000;
+				margin: 20px 20px 20px 20px;
+			}
+			.rescheduling-style{
+				background-color: rgb(252, 213, 213);
+				color: rgb(131, 1, 1);
+			}
+			.background-color-green{
+				background-color: rgb(221, 248, 221);
+			}
+			.h1center{
+				text-align: center;
+			}
         	.paragraph-text{
-				color: red;
+				color: rgb(0, 0, 0);
 			}
 			.blue-text{
-				color: blue;
+				color: rgb(44, 10, 197);
 			}
 			.text-bold{
 				font-weight: bold;
 				font-size: 10px;
 			}
 			.background{
-				background-color: #bedafa;
+				background-color: #ffffff;
+			}
+			#itemmaster{
+				color: green;
+			}
+			.buttonspace{
+				margin: 5px 5px 5px 5px;	
+
+			}
+			.linkspace{
+				margin: 2px;
+				padding-left: 20px;
 			}
     </style>
     <script>
+            function getDelValue(){
+                var delValue = document.getElementById("deliverynumber").value;
+				var branchNum = document.getElementById("branchnumber").value;
+                alert(delValue + ", " + branchNum);
+            }
+
         function write(str) {
 				var bodyElements,
 					body,
@@ -244,19 +279,24 @@
     </script>
     </head>
     <body class="background">
-        <h1>Item Master</h1>
-            <p><button class="paragraph-text" onclick="goItemMaster();">Print Item Master</button></p>
-            <p class="paragraph-text">This Button will Print an Item Master at your branch</p>
-        <h1>Rescheduling</h1>
-            <p><button onclick="goReschedule();" class="blue-text">Reschedule***</button></p>
+		<div class="borderstyleh1 background-color-green" id="itemmaster">
+       	 	<h1 class="h1center">Item Master</h1>
+            	<p><button class="paragraph-text buttonspace" onclick="goItemMaster();">Print Item Master</button></p>
+            	<p class="paragraph-text">This Button will Print an Item Master at your branch</p>
+		</div>
+		<div id="reschedule" class="borderstyleh1 rescheduling-style">
+			<h1 class="h1center">Rescheduling</h1>
+            <p><button onclick="goReschedule();" class="blue-text buttonspace">Reschedule***</button></p>
             <p class="blue-text"> This Button will reschedule backorders and force delivery of Counter, Will Call and Ship Transfer Orders</p> 
             <p class="text-bold"> ***NOTE, this will not remove Hold Stock delivery blocks***</p>
-        <h1>Invoice Generator</h1>
-        <form>
-            <label for="deliverynumber">Delivery Number</label><br>
-                <input type="text" id="deliverynumber" name="deliverynumber"><br>
-            <label for="branchnumber">Branch Number</label><br>
-                <input type="text" id="branchnumber" name="deliverynumber"><br>
-            <input type="submit" value="Generate Invoice">
-        </form>
+        </div>
+		<div id="invoice" class="borderstyleh1">
+			<h1 class="h1center" >Invoice Generator</h1>
+        	   		<label for="deliverynumber">Delivery Number</label><br>
+                	<input type="text" id="deliverynumber" class="linkspace"><br>
+					<label for="branchnumber">Branch Number</label><br>
+					<input type="text" id="branchnumber" class="linkspace"><br>
+            		<button type="button" class="linkspace" onclick="getDelValue()";>Generate Invoice</a>
+        		
+		</div>
     </body>  
