@@ -44,11 +44,7 @@
 			}
     </style>
     <script>
-            function getDelValue(){
-                var delValue = document.getElementById("deliverynumber").value;
-				var branchNum = document.getElementById("branchnumber").value;
-                alert(delValue + ", " + branchNum);
-            }
+
 
         function write(str) {
 				var bodyElements,
@@ -186,7 +182,7 @@
 				}
 			}
 			
-					function goReschedule() {
+			function goReschedule() {
 				var branchNumber, 
 					session;
 				
@@ -276,6 +272,61 @@
 					write(err.message);
 				}
 			}
+
+			function getDelValue(){
+               	var delValue = document.getElementById("deliverynumber").value;
+				var branchNum = document.getElementById("branchnumber").value;
+				alert(delValue + ", " + branchNum);
+			}
+
+			function confirmTicket(){
+				write('running zzsd10');
+				try {
+					session.startTransaction('ZZSD10');
+				} catch(err){
+					throw {message: 'Error, couldn\'t open ZZSD10'};
+				}
+			}	
+
+			function goDelValue(){
+				var branchNumber, 
+					session;
+
+				function initSession() {
+					write('Getting control of SAP session...');
+
+					try {
+						session = getSAPSession();
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t get SAP session'};
+					}
+				}
+
+				function startConfirm(){
+					write('Running zzsd10...');
+					try{
+						session.startTransaction('zzsd10');
+					} catch(err){
+						throw{message: 'Error cannot open zzsd10...'};
+					}
+				}
+
+				function getDelValue(){
+               		var delValue = document.getElementById("deliverynumber").value;
+					var branchNum = document.getElementById("branchnumber").value;
+					alert(delValue + ", " + branchNum);
+				}
+
+				try {
+					getDelValue;
+					initSession;
+					startConfirm;
+				} catch(err){
+					write(err.message);
+				}
+
+			}
+
     </script>
     </head>
     <body class="background">
@@ -296,7 +347,7 @@
                 	<input type="text" id="deliverynumber" class="linkspace"><br>
 					<label for="branchnumber">Branch Number</label><br>
 					<input type="text" id="branchnumber" class="linkspace"><br>
-            		<button type="button" class="linkspace" onclick="getDelValue()";>Generate Invoice</a>
+            		<button type="button" class="linkspace" onclick="goDelValue()";>Generate Invoice</a>
         		
 		</div>
     </body>  

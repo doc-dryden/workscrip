@@ -47,7 +47,33 @@
             function getDelValue(){
                 var delValue = document.getElementById("deliverynumber").value;
 				var branchNum = document.getElementById("branchnumber").value;
-                alert(delValue + ", " + branchNum);
+                //alert(delValue + ", " + branchNum);
+
+				function initSession() {
+					write('Getting control of SAP session...');
+
+					try {
+						session = getSAPSession();
+					} catch(err) {
+						throw {message: 'Error, Couldn\'t get SAP session'};
+					}
+				}
+
+				function confirmTicket(){
+					try {
+						session.startTransaction('ZZSD10');
+
+				}
+					catch(err){
+
+					}
+				try {
+					initSession;
+					confirmTicket;
+				}
+				catch(err){}
+
+				
             }
 
         function write(str) {
@@ -276,6 +302,7 @@
 					write(err.message);
 				}
 			}
+		}
     </script>
     </head>
     <body class="background">
